@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Produto
 
@@ -11,7 +11,7 @@ def cadastrar_produto(request):
         
         produto = Produto(nome=nome, preco=preco)
         produto.save()
-        return HttpResponse(f'Produto cadastrado: {nome}, Preço: {preco}')
+        return redirect('cadastrar_produto')
     
 
 def visualizar_produtos(request):
