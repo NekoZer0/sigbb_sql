@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Produto
 
 def cadastrar_produto(request):
     if request.method == 'GET':
@@ -7,7 +8,11 @@ def cadastrar_produto(request):
     elif request.method == 'POST':
         nome = request.POST.get('nome_do_produto')
         preco = request.POST.get('preco_do_produto')
+        
+        produto = Produto(nome=nome, preco=preco)
+        produto.save()
         return HttpResponse(f'Produto cadastrado: {nome}, Preço: {preco}')
+    
 
 def visualizar_produtos(request):
     return HttpResponse('pagina de visualização de protudos')

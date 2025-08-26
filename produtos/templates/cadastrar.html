@@ -13,7 +13,7 @@
   <body>
     <br></br>
       <div class="container">
-          <form action="/produtos/cadastrar/" method="post">
+          <form action="{%url 'cadastrar_produto'%}" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="exampleInputNome">Nome do produto</label>

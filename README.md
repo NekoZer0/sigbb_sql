@@ -98,10 +98,10 @@
 15. **Criar o formulário de cadastro com método POST e nomes nos inputs**
 
     - No ficheiro `cadastrar.html` dentro da pasta `templates` da aplicação, adicione o seguinte formulário:
-        - *O atributo `action` define para onde o formulário será enviado, enquanto o `method="post"` garante que os dados sejam enviados de forma segura. Os atributos `name` nos inputs permitem que os valores sejam recuperados no backend através de `request.POST`. O token `{% csrf_token %}` protege contra ataques CSRF.*
+        - *O atributo `action` define para onde o formulário será enviado. Usamos `{% url 'cadastrar_produto' %}` para gerar automaticamente a URL associada ao nome da rota definido no ficheiro `urls.py` da aplicação (no exemplo, `name='cadastrar_produto'`). Isto garante que, mesmo que a URL mude no futuro, o formulário continuará a enviar os dados para o destino correto, pois o Django irá resolver o nome da rota para o endereço atual. O atributo `method="post"` garante que os dados sejam enviados de forma segura. Os atributos `name` nos inputs permitem que os valores sejam recuperados no backend através de `request.POST`. O token `{% csrf_token %}` protege contra ataques CSRF.*
 
         ```html
-        <form action="/produtos/cadastrar/" method="post">
+        <form action="{% url 'cadastrar_produto' %}" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="exampleInputNome">Nome do produto</label>
@@ -155,3 +155,23 @@
     - Para aplicar as migrações e criar a tabela no banco de dados, execute:
         - `uv run manage.py migrate`
     - *O comando `makemigrations` gera os ficheiros de migração que descrevem as alterações no modelo, enquanto o comando `migrate` aplica essas alterações ao banco de dados, criando ou modificando as tabelas conforme necessário.*
+
+20. **Salvar os dados do formulário no banco de dados**
+
+    - No ficheiro `views.py` da aplicação, importe o modelo `Produto`, adicona `redirect` no import e utilize-o para criar e salvar um novo produto com os dados recebidos do formulário. Após salvar, utilize o `redirect('cadastrar')` para redirecionar o utilizador de volta à página do formulário:
+        ```python
+        from .models import Produto
+        from django.shortcuts import render, redirect
+        from django.http import HttpResponse
+
+        def cadastrar_produto(request):
+            if request.method == 'GET':
+                return render(request, 'cadastrar.html')
+            elif request.method == 'POST':
+                nome = request.POST.get('nome_do_produto')
+                preco = request.POST.get('preco_do_produto')
+                produto = Produto(nome=nome, preco=preco)
+                produto.save()
+                return redirect('cadastrar_produto')
+        ```
+    - *Neste passo, os dados enviados pelo formulário são utilizados para criar uma nova instância do modelo `Produto`, que é então salva no banco de dados com o método `save()`. O comando `redirect('cadastrar_produto')` faz com que, após o cadastro, o utilizador seja redirecionado para a mesma página do formulário, evitando o reenvio dos dados caso a página seja recarregada e permitindo um fluxo mais limpo na navegação.*
