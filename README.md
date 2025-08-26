@@ -49,7 +49,7 @@
     - *Isto garante que o Django reconhece a nova aplicação e a inclui no projeto.*
 
 11. **Configurar as URLs principais do projeto**
-    - No ficheiro `<nome_do_projecto>/urls.py`, importe o `include` e adicione uma rota para a aplicação:
+    - No ficheiro `<nome_do_projecto>/urls.py`, importe o `include`  de `django.urls` e adicione uma rota para a aplicação:
         ```python
         from django.contrib import admin
         from django.urls import path, include
