@@ -3,5 +3,6 @@ from produtos import views
 
 urlpatterns = [
     path('cadastrar/', views.cadastrar_produto, name='cadastrar_produto'),
+    path('visualizar/', views.visualizar_produtos, name='visualizar_produtos')
 
 ]

@@ -1,6 +1,6 @@
-## Explicação dos passos
 
-1. **Actualizar o uv**
+17. **Migrar todas as tabelas necessárias para o funcionamento correto da aplicação**
+    - `uv run manage.py migrate`
     - `uv self update`
     - *Este comando garante que está a usar a versão mais recente do [uv](https://github.com/astral-sh/uv), uma ferramenta moderna para gestão de ambientes Python e dependências. Manter o uv atualizado previne problemas de compatibilidade e traz melhorias de performance.*
 
@@ -83,3 +83,75 @@
             return HttpResponse("Página de cadastro de produto.")
         ```
     - *Esta função retorna uma resposta simples para testar se a rota está a funcionar corretamente. Pode ser expandida para renderizar templates ou processar formulários conforme necessário.*
+
+14. **Criar a pasta de templates e o ficheiro HTML da aplicação**
+    - Dentro da pasta da aplicação (por exemplo, `produtos`), crie uma pasta chamada `templates`. Dentro desta pasta, crie um ficheiro chamado `cadastrar.html` que irá conter o código HTML da página de cadastro.
+    - No ficheiro `views.py`, altere a função para renderizar o template:
+        ```python
+        from django.shortcuts import render
+
+        def cadastrar_produto(request):
+            return render(request, 'cadastrar.html')
+        ```
+    - *A criação da pasta `templates` e do ficheiro `cadastrar.html` permite separar a lógica da aplicação da camada visual. O método `render` procura o ficheiro HTML na pasta de templates e exibe-o quando a rota correspondente é acedida.*
+
+15. **Criar o formulário de cadastro com método POST e nomes nos inputs**
+
+    - No ficheiro `cadastrar.html` dentro da pasta `templates` da aplicação, adicione o seguinte formulário:
+        - *O atributo `action` define para onde o formulário será enviado, enquanto o `method="post"` garante que os dados sejam enviados de forma segura. Os atributos `name` nos inputs permitem que os valores sejam recuperados no backend através de `request.POST`. O token `{% csrf_token %}` protege contra ataques CSRF.*
+
+        ```html
+        <form action="/produtos/cadastrar/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="exampleInputNome">Nome do produto</label>
+                <input name="nome_do_produto" type="text" class="form-control" id="exampleInputNome" aria-describedby="nomeHelp" placeholder="Insira o nome do produto">
+                <small id="nomeHelp" class="form-text text-muted">Nunca vamos compartilhar seu produto com ninguém.</small>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPreco">Preço do produto</label>
+                <input name="preco_do_produto" type="number" class="form-control" id="exampleInputPreco" placeholder="Insira o preço do produto">
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </form>
+        ```
+16. **Tratar o método da requisição e capturar dados do formulário**
+
+    - No ficheiro `views.py` da aplicação, ajuste a função para diferenciar entre requisições GET e POST:
+        - *Quando o método for `GET`, apenas exibe o formulário HTML. Quando for `POST`, recupera os dados enviados pelo formulário usando `request.POST.get('<nome_do_input>')` e pode processá-los conforme necessário.*
+
+        ```python
+        from django.shortcuts import render
+        from django.http import HttpResponse
+
+        def cadastrar_produto(request):
+            if request.method == 'GET':
+                return render(request, 'cadastrar.html')
+            elif request.method == 'POST':
+                nome = request.POST.get('nome_do_produto')
+                preco = request.POST.get('preco_do_produto')
+                return HttpResponse(f'Produto cadastrado: {nome}, Preço: {preco}')
+        ```
+    - *O atributo `request.method` permite identificar o tipo de requisição (GET ou POST). O método `request.POST.get()` é utilizado para obter os valores enviados pelo formulário, usando os nomes definidos nos campos do HTML.*
+
+17. **Migrar todas as tabelas necessárias para o funcionamento correto da aplicação**
+    - `uv run manage.py migrate`
+    - *Este comando aplica todas as migrações pendentes, criando ou atualizando as tabelas no banco de dados conforme definido pelos modelos do Django. É importante executar este comando sempre que houver alterações nos modelos para garantir que o banco de dados esteja sincronizado com o código.*
+
+18. **Criar o modelo da aplicação**
+    - No ficheiro `models.py` da sua aplicação (por exemplo, `produtos/models.py`), defina o modelo que representa a tabela no banco de dados:
+        ```python
+        from django.db import models
+
+        class Produto(models.Model):
+            nome = models.CharField(max_length=100)
+            preco = models.DecimalField(max_digits=10, decimal_places=2)
+        ```
+    - *O modelo `Produto` define os campos que serão armazenados na tabela do banco de dados, utilizando o ORM do Django para facilitar a manipulação dos dados.*
+
+19. **Criar e aplicar as migrações do novo modelo**
+    - Para criar as migrações com base no novo modelo, execute:
+        - `uv run manage.py makemigrations`
+    - Para aplicar as migrações e criar a tabela no banco de dados, execute:
+        - `uv run manage.py migrate`
+    - *O comando `makemigrations` gera os ficheiros de migração que descrevem as alterações no modelo, enquanto o comando `migrate` aplica essas alterações ao banco de dados, criando ou modificando as tabelas conforme necessário.*

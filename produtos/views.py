@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-# Create your views here.
 def cadastrar_produto(request):
-    return HttpResponse("Página de cadastro de produto.")
+    if request.method == 'GET':
+        return render(request, 'cadastrar.html')
+    elif request.method == 'POST':
+        nome = request.POST.get('nome_do_produto')
+        preco = request.POST.get('preco_do_produto')
+        return HttpResponse(f'Produto cadastrado: {nome}, Preço: {preco}')
 
-def cadastrar(request):
-    return render(request, 'cadastrar_produto.html')
+def visualizar_produtos(request):
+    return HttpResponse('pagina de visualização de protudos')
