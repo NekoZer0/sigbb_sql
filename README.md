@@ -36,3 +36,50 @@
     - `alias uvm='uv run manage.py'`
     - `alias uvr='uv run'`
     - *Estes comandos criam atalhos (aliases) no seu terminal para facilitar a execução de comandos frequentes. O alias `uvm` permite executar rapidamente comandos do `manage.py` dentro do ambiente uv, enquanto `uvr` simplifica a execução de qualquer comando Python no ambiente gerido pelo uv. Para tornar os aliases permanentes, adicione-os ao ficheiro de configuração do seu shell, como `.bashrc` ou `.zshrc`.*
+
+10. **Adicionar a aplicação ao `INSTALLED_APPS`**
+    - No ficheiro `<nome_do_projecto>/settings.py`, adicione o nome da aplicação criada (por exemplo, `produtos`) à lista `INSTALLED_APPS`:
+        ```python
+        INSTALLED_APPS = [
+            'django.contrib.admin',
+            # ... outros apps padrão ...
+            'produtos',
+        ]
+        ```
+    - *Isto garante que o Django reconhece a nova aplicação e a inclui no projeto.*
+
+11. **Configurar as URLs principais do projeto**
+    - No ficheiro `<nome_do_projecto>/urls.py`, importe o `include` e adicione uma rota para a aplicação:
+        ```python
+        from django.contrib import admin
+        from django.urls import path, include
+
+        urlpatterns = [
+            path('admin/', admin.site.urls),
+            path('produtos/', include('produtos.urls')),
+        ]
+        ```
+    - *O uso de `include` permite delegar o roteamento das URLs da aplicação para um ficheiro próprio dentro da pasta da app.*
+
+12. **Criar o ficheiro de URLs da aplicação**
+    - Dentro da pasta da aplicação (por exemplo, `produtos`), crie um ficheiro chamado `urls.py` com o seguinte conteúdo:
+        ```python
+        from django.urls import path
+        from . import views
+
+        urlpatterns = [
+            path('cadastrar/', views.cadastrar_produto, name='cadastrar_produto'),
+        ]
+        ```
+    - *Este ficheiro define as rotas específicas da aplicação, associando URLs às funções de visualização (views).*
+
+13. **Criar a view para a rota da aplicação**
+    - No ficheiro `views.py` da aplicação, defina a função que será chamada pela rota criada:
+        ```python
+        from django.shortcuts import render
+        from django.http import HttpResponse
+
+        def cadastrar_produto(request):
+            return HttpResponse("Página de cadastro de produto.")
+        ```
+    - *Esta função retorna uma resposta simples para testar se a rota está a funcionar corretamente. Pode ser expandida para renderizar templates ou processar formulários conforme necessário.*
