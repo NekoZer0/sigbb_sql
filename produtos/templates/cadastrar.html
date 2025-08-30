@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-AO">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -12,7 +12,18 @@
   </head>
   <body>
     <br></br>
+        
       <div class="container">
+            {% if status == '0' %}
+              <div class="alert alert-danger" role="alert">
+                O preço não pode ser negativo!
+              </div>
+            {% elif status == '1' %}
+              <div class="alert alert-success" role="alert">
+                Produto cadastrado com sucesso!
+              </div>
+            {%endif%}
+
           <form action="{%url 'cadastrar_produto'%}" method="post">
             {% csrf_token %}
             <div class="form-group">

@@ -1,8 +1,16 @@
+1. **Instalar e atualizar o gerenciador de ambientes Python e dependências**
 
-17. **Migrar todas as tabelas necessárias para o funcionamento correto da aplicação**
-    - `uv run manage.py migrate`
-    - `uv self update`
-    - *Este comando garante que está a usar a versão mais recente do [uv](https://github.com/astral-sh/uv), uma ferramenta moderna para gestão de ambientes Python e dependências. Manter o uv atualizado previne problemas de compatibilidade e traz melhorias de performance.*
+    - *Utilize o [uv](https://docs.astral.sh/uv/getting-started/installation/), uma ferramenta moderna para gestão de ambientes Python e dependências. Siga os passos abaixo para instalar e garantir que está usando a versão mais recente.*
+
+    - **Instalação no Windows**
+        - Baixe e execute o instalador autônomo do uv com o comando:
+            `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+        - *Este comando faz o download e executa o script de instalação do uv diretamente no seu terminal.*
+
+    - **Atualizar o uv**
+        - Após a instalação, execute:
+            `uv self update`
+        - *Este comando garante que você está utilizando a versão mais recente do uv, prevenindo problemas de compatibilidade e trazendo melhorias de performance.*
 
 2. **Criar um novo projecto**
     - `uv init <nome do projecto>`
@@ -175,3 +183,46 @@
                 return redirect('cadastrar_produto')
         ```
     - *Neste passo, os dados enviados pelo formulário são utilizados para criar uma nova instância do modelo `Produto`, que é então salva no banco de dados com o método `save()`. O comando `redirect('cadastrar_produto')` faz com que, após o cadastro, o utilizador seja redirecionado para a mesma página do formulário, evitando o reenvio dos dados caso a página seja recarregada e permitindo um fluxo mais limpo na navegação.*
+
+    21. **Exibir mensagens de status com base em parâmetros da URL**
+
+        - Para exibir mensagens de sucesso ou erro após o cadastro do produto, utilize um parâmetro `status` na URL e passe este valor para o template. Assim, o HTML pode mostrar alertas dinâmicos conforme o resultado da operação.
+
+        - No ficheiro `views.py`, ajuste a função para:
+            - Redirecionar para a rota `/produtos/cadastrar/?status=0` caso o preço seja negativo.
+            - Redirecionar para `/produtos/cadastrar/?status=1` após cadastrar com sucesso.
+            - Recuperar o parâmetro `status` da URL usando `request.GET.get('status')` e passá-lo ao template colocando mais um paramentro no render `{'status': status}.`
+
+            ```python
+            from .models import Produto
+            from django.shortcuts import render, redirect
+
+            def cadastrar_produto(request):
+                if request.method == 'GET':
+                    status = request.GET.get('status')
+                    return render(request, 'cadastrar.html', {'status': status})
+                elif request.method == 'POST':
+                    nome = request.POST.get('nome_do_produto')
+                    preco = request.POST.get('preco_do_produto')
+                    if float(preco) < 0:
+                        return redirect('/produtos/cadastrar/?status=0')
+                    produto = Produto(nome=nome, preco=preco)
+                    produto.save()
+                    return redirect('/produtos/cadastrar/?status=1')
+            ```
+
+        - No ficheiro `cadastrar.html`, adicione o seguinte bloco para exibir as mensagens de acordo com o valor de `status`:
+
+            ```html
+            {% if status == '0' %}
+              <div class="alert alert-danger" role="alert">
+                O preço não pode ser negativo!
+              </div>
+            {% elif status == '1' %}
+              <div class="alert alert-success" role="alert">
+                Produto cadastrado com sucesso!
+              </div>
+            {% endif %}
+            ```
+
+        - *Desta forma, o template pode acessar a variável `status` e exibir a mensagem apropriada ao utilizador, melhorando a experiência de uso do formulário.*
