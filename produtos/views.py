@@ -20,6 +20,13 @@ def cadastrar_produto(request):
         
         return redirect('/produtos/cadastrar/?status=1')  
     
-
 def visualizar_produtos(request):
-    return HttpResponse('pagina de visualização de protudos')
+    produtos = Produto.objects.all()
+    return render(request, 'produtos.html', {'produtos': produtos})
+
+def index(request):
+    return render(request, 'index.html')  # Landpage
+
+def loja(request):
+    return render(request, 'loja.html')  # Exemplo
+
