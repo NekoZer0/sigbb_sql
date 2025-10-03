@@ -16,41 +16,40 @@
       crossorigin="anonymous"
     />
 
-    <title>Listar Produtos</title>
+    <title>Lista Produtos</title>
   </head>
   <body>
     <br></br>
     <div class="container mt-4">
+  
       <h1>Lista de Produtos</h1>
       <!-- Link para cadastrar produto -->
-      <a class="btn btn-outline-secondary" href="{% url 'cadastrar_produto' %}">Cadastrar novo produto</a>
-      <br></br>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Nome do Produto</th>
-            <th scope="col">Preço</th>
-            <th scope="col">Apagar/Actualizar</th>
-          </tr>
-        </thead>
-        {%for produto in produtos %}
-        <tbody>
-          <tr>
-            <th scope="row">{{ produto.id }}</th>
-            <td>{{ produto.nome }}</td>
-            <td>{{ produto.preco }} kz</td>
-            <td><a class="btn btn-danger" href="{% url 'apagar_produto' produto.id %} ">Apagar</a><button type="button" class="btn btn-secondary ml-3">Actualizar</button></td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="4" class="text-center text-secondary font-weight-bold" style="font-size: 18px; background-color: #a8a8a83a;">
+      <a class="btn btn-outline-primary" href="{% url 'cadastrar_produto' %}">Cadastrar novo produto</a>
+      <div class="container mt-4">
+        <div class="row">
+          {% for produto in produtos %}
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ produto.nome }}</h5>
+                <p class="card-text">Preço: R$ {{ produto.preco }}</p>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <div class="alert alert-warning text-center">
               Nenhum produto cadastrado.
-            </td>
-          </tr>
-        {% endfor %}
-        </table>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+ 
     </div>
+
+ 
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -21,8 +21,8 @@ from produtos import views as produtos_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('produtos/', include('produtos.urls')),
-    path('', include('produtos.urls')),
-    path('loja/', produtos_views.loja, name='loja'),  # nova view para loja
-    
+    # path('produtos/', include('produtos.urls')),
+    path('loja/', include('produtos.urls')),
+    path('', produtos_views.index, name='index'),  # nova view para loja
+   
 ]
