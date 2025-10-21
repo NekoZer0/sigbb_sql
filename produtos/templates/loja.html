@@ -38,17 +38,20 @@
         <tbody>
           <tr>
             <th scope="row">{{ produto.id }}</th>
-            <td>{{ produto.nome }}</td>
-            <td>{{ produto.preco }} kz</td>
-            <td><a class="btn btn-danger" href="{% url 'apagar_produto' produto.id %} ">Apagar</a><button type="button" class="btn btn-secondary ml-3">Actualizar</button></td>
+              <form action="{%url 'editar_produto' produto.id%}" method="post">
+              {% csrf_token %}
+                <td><input class="form-control" type="text" name="nome_do_produto" value="{{ produto.nome }}"></td>
+                <td><input class="form-control" type="text" name='preco_do_produto' value="{{ produto.preco }}"></td>
+                <td><a class="btn btn-danger" href="{% url 'apagar_produto' produto.id %} ">Apagar</a><input type="submit" value="Actualizar" class="btn btn-secondary ml-3"></td>
+              </form>     
           </tr>
-        {% empty %}
-          <tr>
-            <td colspan="4" class="text-center text-secondary font-weight-bold" style="font-size: 18px; background-color: #a8a8a83a;">
-              Nenhum produto cadastrado.
-            </td>
-          </tr>
-        {% endfor %}
+          {% empty %}
+            <tr>
+              <td colspan="4" class="text-center text-secondary font-weight-bold" style="font-size: 18px; background-color: #a8a8a83a;">
+                Nenhum produto cadastrado.
+              </td>
+            </tr>
+          {% endfor %}
         </table>
     </div>
 
