@@ -24,5 +24,6 @@ urlpatterns = [
     # path('produtos/', include('produtos.urls')),
     path('loja/', include('produtos.urls')),
     path('', produtos_views.index, name='index'),  # nova view para loja
-   
+    path('login/', produtos_views.login, name='login'),
+    path('cadastrar_user/', produtos_views.cadastrar_user, name='cadastrar_user'),
 ]

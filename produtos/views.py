@@ -1,4 +1,3 @@
-from turtle import st
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Produto
@@ -25,9 +24,18 @@ def cadastrar_produto(request):
         return redirect('/loja/cadastrar/?status=1')
 
 
+def login(request):
+    return render(request, 'login.html')
+
+
+def cadastrar_user(request):
+    return render(request, 'cadastrar_user.html')
+
+
 def visualizar_produtos(request):
     produtos = Produto.objects.all()
     return render(request, 'loja.html', {'produtos': produtos})
+
 
 def apagar_produto(request, produto_id):
     try:
@@ -45,6 +53,7 @@ def index(request):
 def loja(request):
     return render(request, 'loja.html')  # Exemplo
 
+
 def editar_produto(request, produto_id):
     try:
         produto = Produto.objects.get(id=produto_id)
@@ -57,10 +66,10 @@ def editar_produto(request, produto_id):
     elif request.method == 'POST':
         nome = request.POST.get('nome_do_produto')
         preco = (request.POST.get('preco_do_produto'))
-    
+
         preco = Decimal(preco.replace(',', '.'))
         if preco <= 0:
-            ## return redirect(f'/produtos/editar_produto/{produto_id}/?status=0')
+            # return redirect(f'/produtos/editar_produto/{produto_id}/?status=0')
             return HttpResponse("Preço inválido.", status=302)
 
         produto.nome = nome
